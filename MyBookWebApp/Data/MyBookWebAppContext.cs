@@ -16,6 +16,8 @@ namespace MyBookWebApp.Data
 
         }
         public DbSet<Book> Books { get; set; }
+        public DbSet<Author> Authors { get; set; }
+        public DbSet<Language> Languages { get; set; }
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
@@ -25,6 +27,8 @@ namespace MyBookWebApp.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Book>().ToTable(nameof(Book));
+            modelBuilder.Entity<Author>().ToTable(nameof(Author));
+            modelBuilder.Entity<Language>().ToTable(nameof(Language));
         }
 
     }

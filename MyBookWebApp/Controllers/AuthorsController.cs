@@ -10,22 +10,22 @@ using MyBookWebApp.Models;
 
 namespace MyBookWebApp.Controllers
 {
-    public class BooksController : Controller
+    public class AuthorsController : Controller
     {
         private readonly MyBookWebAppContext _context;
 
-        public BooksController(MyBookWebAppContext context)
+        public AuthorsController(MyBookWebAppContext context)
         {
             _context = context;
         }
 
-        // GET: Books
+        // GET: Authors
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Books.AsNoTracking().ToListAsync());
+            return View(await _context.Authors.AsNoTracking().ToListAsync());
         }
 
-        // GET: Books/Details/5
+        // GET: Authors/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,40 +33,39 @@ namespace MyBookWebApp.Controllers
                 return NotFound();
             }
 
-            var book = await _context.Books.AsNoTracking()
+            var author = await _context.Authors.AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
-
-            if (book == null)
+            if (author == null)
             {
                 return NotFound();
             }
 
-            return View(book);
+            return View(author);
         }
 
-        // GET: Books/Create
+        // GET: Authors/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Books/Create
+        // POST: Authors/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Author,Language")] Book book)
+        public async Task<IActionResult> Create([Bind("Name")] Author author)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(book);
+                _context.Add(author);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(book);
+            return View(author);
         }
 
-        // GET: Books/Edit/5
+        // GET: Authors/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,25 +73,22 @@ namespace MyBookWebApp.Controllers
                 return NotFound();
             }
 
-            var book = await _context.Books
-                .AsNoTracking()
-                .FirstOrDefaultAsync(item => item.ID == id);
-
-            if (book == null)
+            var author = await _context.Authors.FindAsync(id);
+            if (author == null)
             {
                 return NotFound();
             }
-            return View(book);
+            return View(author);
         }
 
-        // POST: Books/Edit/5
+        // POST: Authors/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Title,Author,Language")] Book book)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name")] Author author)
         {
-            if (book.ID != id)
+            if (author.ID != id)
             {
                 return NotFound();
             }
@@ -101,26 +97,22 @@ namespace MyBookWebApp.Controllers
             {
                 try
                 {
-                    _context.Update(book);
+                    _context.Update(author);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BookExists(book.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    //Log the error (uncomment ex variable name and write a log.)
+                    ModelState.AddModelError("", "Unable to save changes. " +
+                        "Try again, and if the problem persists, " +
+                        "see your system administrator.");
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(book);
+            return View(author);
         }
 
-        // GET: Books/Delete/5
+        // GET: Authors/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,30 +120,30 @@ namespace MyBookWebApp.Controllers
                 return NotFound();
             }
 
-            var book = await _context.Books
+            var author = await _context.Authors.AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (book == null)
+            if (author == null)
             {
                 return NotFound();
             }
 
-            return View(book);
+            return View(author);
         }
 
-        // POST: Books/Delete/5
+        // POST: Authors/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var book = await _context.Books.AsNoTracking().FirstAsync(item => item.ID == id);
-            _context.Books.Remove(book);
+            var author = await _context.Authors.AsNoTracking().FirstAsync(item => item.ID == id);
+            _context.Authors.Remove(author);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BookExists(int id)
+        private bool AuthorExists(int id)
         {
-            return _context.Books.Any(e => e.ID == id);
+            return _context.Authors.Any(e => e.ID == id);
         }
     }
 }
