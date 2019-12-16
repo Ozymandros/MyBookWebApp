@@ -22,7 +22,11 @@ namespace MyBookWebApp.Controllers
         // GET: Books
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Books.AsNoTracking().ToListAsync());
+            return View(await _context.Books
+                .AsNoTracking()
+                .Include(book => book.Language)
+                .Include(book => book.Author)
+                .ToListAsync());
         }
 
         // GET: Books/Details/5
@@ -34,6 +38,8 @@ namespace MyBookWebApp.Controllers
             }
 
             var book = await _context.Books.AsNoTracking()
+                .Include(book => book.Language)
+                .Include(book => book.Author)
                 .FirstOrDefaultAsync(m => m.ID == id);
 
             if (book == null)
@@ -47,6 +53,8 @@ namespace MyBookWebApp.Controllers
         // GET: Books/Create
         public IActionResult Create()
         {
+            ViewBag.Languages = new SelectList(_context.Languages.AsNoTracking(), "ID", nameof(Language.Name));
+            ViewBag.Authors = new SelectList(_context.Authors.AsNoTracking(), "ID", nameof(Author.Name));
             return View();
         }
 
@@ -55,7 +63,7 @@ namespace MyBookWebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Author,Language")] Book book)
+        public async Task<IActionResult> Create([Bind("Title,AuthorID,LanguageID")] Book book)
         {
             if (ModelState.IsValid)
             {
@@ -63,6 +71,8 @@ namespace MyBookWebApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.Languages = new SelectList(_context.Languages.AsNoTracking(), "ID", nameof(Language.Name), book.LanguageID);
+            ViewBag.Authors = new SelectList(_context.Authors.AsNoTracking(), "ID", nameof(Author.Name), book.AuthorID);
             return View(book);
         }
 
@@ -82,6 +92,10 @@ namespace MyBookWebApp.Controllers
             {
                 return NotFound();
             }
+
+            ViewBag.Languages = new SelectList(_context.Languages.AsNoTracking(), "ID", nameof(Language.Name), book.LanguageID);
+            ViewBag.Authors = new SelectList(_context.Authors.AsNoTracking(), "ID", nameof(Author.Name), book.AuthorID);
+
             return View(book);
         }
 
@@ -90,7 +104,7 @@ namespace MyBookWebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Title,Author,Language")] Book book)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,AuthorID,LanguageID")] Book book)
         {
             if (book.ID != id)
             {
@@ -117,6 +131,10 @@ namespace MyBookWebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.Languages = new SelectList(_context.Languages.AsNoTracking(), "ID", nameof(Language.Name), book.LanguageID);
+            ViewBag.Authors = new SelectList(_context.Authors.AsNoTracking(), "ID", nameof(Author.Name), book.AuthorID);
+
             return View(book);
         }
 

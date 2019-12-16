@@ -86,7 +86,7 @@ namespace MyBookWebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name")] Language language)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name")] Language language)
         {
             if (language.ID != id)
             {

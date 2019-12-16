@@ -26,9 +26,9 @@ namespace MyBookWebApp.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Book>().ToTable(nameof(Book));
-            modelBuilder.Entity<Author>().ToTable(nameof(Author));
-            modelBuilder.Entity<Language>().ToTable(nameof(Language));
+            modelBuilder.Entity<Book>().HasIndex(bo => bo.Title).IsUnique();//.ToTable(nameof(Book));
+            modelBuilder.Entity<Author>().HasIndex(au => au.Name).IsUnique();//.ToTable(nameof(Author));
+            modelBuilder.Entity<Language>().HasIndex(la => la.Name).IsUnique();//.ToTable(nameof(Language));
         }
 
     }
