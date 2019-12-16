@@ -10,26 +10,22 @@ using MyBookWebApp.Models;
 
 namespace MyBookWebApp.Controllers
 {
-    public class BooksController : Controller
+    public class LanguagesController : Controller
     {
         private readonly MyBookWebAppContext _context;
 
-        public BooksController(MyBookWebAppContext context)
+        public LanguagesController(MyBookWebAppContext context)
         {
             _context = context;
         }
 
-        // GET: Books
+        // GET: Languages
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Books
-                .AsNoTracking()
-                .Include(book => book.Language)
-                .Include(book => book.Author)
-                .ToListAsync());
+            return View(await _context.Languages.AsNoTracking().ToListAsync());
         }
 
-        // GET: Books/Details/5
+        // GET: Languages/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -37,46 +33,39 @@ namespace MyBookWebApp.Controllers
                 return NotFound();
             }
 
-            var book = await _context.Books.AsNoTracking()
-                .Include(book => book.Language)
-                .Include(book => book.Author)
+            var language = await _context.Languages.AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
-
-            if (book == null)
+            if (language == null)
             {
                 return NotFound();
             }
 
-            return View(book);
+            return View(language);
         }
 
-        // GET: Books/Create
+        // GET: Languages/Create
         public IActionResult Create()
         {
-            ViewBag.Languages = new SelectList(_context.Languages.AsNoTracking(), "ID", nameof(Language.Name));
-            ViewBag.Authors = new SelectList(_context.Authors.AsNoTracking(), "ID", nameof(Author.Name));
             return View();
         }
 
-        // POST: Books/Create
+        // POST: Languages/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,AuthorID,LanguageID")] Book book)
+        public async Task<IActionResult> Create([Bind("Name")] Language language)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(book);
+                _context.Add(language);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.Languages = new SelectList(_context.Languages.AsNoTracking(), "ID", nameof(Language.Name), book.LanguageID);
-            ViewBag.Authors = new SelectList(_context.Authors.AsNoTracking(), "ID", nameof(Author.Name), book.AuthorID);
-            return View(book);
+            return View(language);
         }
 
-        // GET: Books/Edit/5
+        // GET: Languages/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -84,43 +73,37 @@ namespace MyBookWebApp.Controllers
                 return NotFound();
             }
 
-            var book = await _context.Books
-                .AsNoTracking()
-                .FirstOrDefaultAsync(item => item.ID == id);
-
-            if (book == null)
+            var language = await _context.Languages.FindAsync(id);
+            if (language == null)
             {
                 return NotFound();
             }
-
-            ViewBag.Languages = new SelectList(_context.Languages.AsNoTracking(), "ID", nameof(Language.Name), book.LanguageID);
-            ViewBag.Authors = new SelectList(_context.Authors.AsNoTracking(), "ID", nameof(Author.Name), book.AuthorID);
-
-            return View(book);
+            return View(language);
         }
 
-        // POST: Books/Edit/5
+        // POST: Languages/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,AuthorID,LanguageID")] Book book)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name")] Language language)
         {
-            if (book.ID != id)
+            if (language.ID != id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (await TryUpdateModelAsync<Language>(language, nameof(language),
+                l => l.Name))
             {
                 try
                 {
-                    _context.Update(book);
+                    _context.Update(language);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BookExists(book.ID))
+                    if (!LanguageExists(language.ID))
                     {
                         return NotFound();
                     }
@@ -131,14 +114,10 @@ namespace MyBookWebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-
-            ViewBag.Languages = new SelectList(_context.Languages.AsNoTracking(), "ID", nameof(Language.Name), book.LanguageID);
-            ViewBag.Authors = new SelectList(_context.Authors.AsNoTracking(), "ID", nameof(Author.Name), book.AuthorID);
-
-            return View(book);
+            return View(language);
         }
 
-        // GET: Books/Delete/5
+        // GET: Languages/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -146,30 +125,30 @@ namespace MyBookWebApp.Controllers
                 return NotFound();
             }
 
-            var book = await _context.Books
+            var language = await _context.Languages
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (book == null)
+            if (language == null)
             {
                 return NotFound();
             }
 
-            return View(book);
+            return View(language);
         }
 
-        // POST: Books/Delete/5
+        // POST: Languages/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var book = await _context.Books.AsNoTracking().FirstAsync(item => item.ID == id);
-            _context.Books.Remove(book);
+            var language = await _context.Languages.AsNoTracking().FirstAsync(item => item.ID == id);
+            _context.Languages.Remove(language);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BookExists(int id)
+        private bool LanguageExists(int id)
         {
-            return _context.Books.Any(e => e.ID == id);
+            return _context.Languages.Any(e => e.ID == id);
         }
     }
 }

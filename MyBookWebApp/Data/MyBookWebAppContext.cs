@@ -16,6 +16,8 @@ namespace MyBookWebApp.Data
 
         }
         public DbSet<Book> Books { get; set; }
+        public DbSet<Author> Authors { get; set; }
+        public DbSet<Language> Languages { get; set; }
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
@@ -24,7 +26,9 @@ namespace MyBookWebApp.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Book>().ToTable(nameof(Book));
+            modelBuilder.Entity<Book>().HasIndex(bo => bo.Title).IsUnique();//.ToTable(nameof(Book));
+            modelBuilder.Entity<Author>().HasIndex(au => au.Name).IsUnique();//.ToTable(nameof(Author));
+            modelBuilder.Entity<Language>().HasIndex(la => la.Name).IsUnique();//.ToTable(nameof(Language));
         }
 
     }

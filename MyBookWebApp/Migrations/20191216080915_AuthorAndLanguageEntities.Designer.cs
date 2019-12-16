@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyBookWebApp.Data;
 
 namespace MyBookWebApp.Migrations
 {
     [DbContext(typeof(MyBookWebAppContext))]
-    partial class MyBookWebAppContextModelSnapshot : ModelSnapshot
+    [Migration("20191216080915_AuthorAndLanguageEntities")]
+    partial class AuthorAndLanguageEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,14 +29,11 @@ namespace MyBookWebApp.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Authors");
+                    b.ToTable("Author");
                 });
 
             modelBuilder.Entity("MyBookWebApp.Models.Book", b =>
@@ -52,7 +51,7 @@ namespace MyBookWebApp.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -60,10 +59,7 @@ namespace MyBookWebApp.Migrations
 
                     b.HasIndex("LanguageID");
 
-                    b.HasIndex("Title")
-                        .IsUnique();
-
-                    b.ToTable("Books");
+                    b.ToTable("Book");
                 });
 
             modelBuilder.Entity("MyBookWebApp.Models.Language", b =>
@@ -75,14 +71,11 @@ namespace MyBookWebApp.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Languages");
+                    b.ToTable("Language");
                 });
 
             modelBuilder.Entity("MyBookWebApp.Models.Book", b =>
